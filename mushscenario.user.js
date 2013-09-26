@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.0
+// @version    1.0.1
 // @description  Légères modifications d'interface pour scénario en casting
 // @match      http://mush.vg/*
 // @match      http://mush.vg/#
@@ -9,6 +9,7 @@
 // ==/UserScript==
 // @require http://code.jquery.com/jquery-latest.js
 var $ = unsafeWindow.jQuery;
+var Main = unsafeWindow.Main;
 
 var ms_title = 'La secte du Grumpy Cat';
 
