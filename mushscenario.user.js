@@ -1,11 +1,16 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.0.9
-// @description  Gestionnaire de scénarios pour Mush.vg
+// @version    1.1.0
+// @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
 // @match      http://mush.vg/*
 // @match      http://mush.vg/#
+// @exclude    http://mush.vg/me
+// @exclude    http://mush.vg/group/*
+// @exclude    http://mush.vg/g/*
+// @exclude    http://mush.vg/ranking
+// @exclude    http://mush.vg/tid/*
 // @copyright  2012+, Ma c'hi
 // @updateurl  https://raw.github.com/Machi3000/MushScenario/master/mushscenario.user.js
 // ==/UserScript==
@@ -53,6 +58,7 @@ function m_popin(title,message,button) {
 /**
  * Userscript specific code
  **/
+var sc;
 
 function m_joinScenario() {
     var newScenarioCode = prompt('MushScénario\n---------------\nVeuillez saisir le code du scénario à utiliser :');
@@ -92,8 +98,36 @@ function m_leaveScenario() {
     document.location.reload(true);
 }
 
+function m_replaceThisName() {
+    console.log('> '+$(this).text().toLowerCase());
+    for(e in sc) {
+        if(e.indexOf('char_')==0) {
+            var charname = e.substr(5);
+            if(charname=='kuanti') { 
+                charname='kuan ti';
+            } else if(charname=='jinsu') { 
+                charname='jin su'; 
+            } else if(charname=='schrödinger') { 
+                charname='schrodinger'; 
+            }
+            
+            if($(this).text().toLowerCase().indexOf(charname)>=0) {
+    			console.log('>>> '+e.substr(5)+' => '+sc[e]);
+            	$(this).html($(this).html().replace(new RegExp(charname,'gi'),sc[e]));
+            }
+        }
+    }
+}
+
+function m_replaceNames() {
+    $('#chat_col span.buddy').each(m_replaceThisName);
+    $('#chat_col strong').each(m_replaceThisName);
+    $('#chat_col .objective p').each(m_replaceThisName);
+    $('h1.who').each(m_replaceThisName); 
+}
+
 function m_applyScenario() {
-    var sc = $.parseJSON(localStorage['ms_scenarioData']);
+    sc = $.parseJSON(localStorage['ms_scenarioData']);
     $('#m_scenario_title').html(sc.title);
     $('.introScenario').click(function() { m_popin(sc.title,'<em>'+sc.intro.replace(/(\n)/g,'<br />')+'</em>','Fermer'); });
     $('.rulesScenario').click(function() { m_popin('Règles de la partie',sc.rules.replace(/(\n)/g,'<br />'),'Fermer'); });
@@ -104,6 +138,21 @@ function m_applyScenario() {
         delete localStorage['ms_scenarioIntro'];
     }
     
+    // Replace characters names
+    m_replaceNames(sc);
+    
+    // Handle ajax updates
+    var ms_mainUpdateContent = Main.updateContent;
+    Main.updateContent = function(url,seek,dest,cb) {
+        ms_mainUpdateContent(url,seek,dest,cb);
+        setTimeout(m_replaceNames,3000);
+    }
+    
+    var ms_mainLoadMoreWall = Main.loadMoreWall;
+    Main.loadMoreWall = function(jq) {
+        ms_mainLoadMoreWall(jq);
+        setTimeout(m_replaceNames,2000);
+    }
 }
 
 function m_thisInit() {
@@ -118,7 +167,6 @@ function m_thisInit() {
     $('#m_userscriptNotif').append(html);
     
     var ms_code = localStorage['ms_scenarioCode']; 
-    console.log('code='+ms_code);
     if(ms_code!=''&&ms_code!=undefined) {
         $('#m_scenario_details').html('<strong>Scénario en cours :</strong><br />'
                                       +'<span id="m_scenario_title"><em>Chargement...</em></span><br />'
