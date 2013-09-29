@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.0
+// @version    1.1.1
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -18,7 +18,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.0';
+var version = '1.1.1';
 
 /**
  * Userscript global tools
@@ -129,7 +129,11 @@ function m_applyScenario() {
     sc = $.parseJSON(localStorage['ms_scenarioData']);
     $('#m_scenario_title').html(sc.title);
     $('.introScenario').click(function() { m_popin(sc.title,'<em>'+sc.intro.replace(/(\n)/g,'<br />')+'</em>','Fermer'); });
-    $('.rulesScenario').click(function() { m_popin('Règles de la partie',sc.rules.replace(/(\n)/g,'<br />'),'Fermer'); });
+    if(sc.rules.length>0) {
+    	$('.rulesScenario').click(function() { m_popin('Règles de la partie',sc.rules.replace(/(\n)/g,'<br />'),'Fermer'); });
+    } else {
+    	$('.rulesScenario').click(function() { m_popin('Règles de la partie','Pas de règle spécifique au scénario.<br />Pensez tout de même à respecter le <a href="http://mush.vg/help?cat=general&scat=rule" target="_blank">règlement</a> ainsi que les <a href="http://twinoid.com/support/cgu" target="_blank">C.G.U.</a> du jeu !','Fermer'); });
+    }
     
     // Display Intro
     if(localStorage['ms_scenarioIntro']!=undefined) {
