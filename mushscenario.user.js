@@ -18,7 +18,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.0.9';
+var version = '1.1.0';
 
 /**
  * Userscript global tools
@@ -112,8 +112,7 @@ function m_replaceThisName() {
             }
             
             if($(this).text().toLowerCase().indexOf(charname)>=0) {
-    			console.log('>>> '+e.substr(5)+' => '+sc[e]);
-            	$(this).html($(this).html().replace(new RegExp(charname,'gi'),sc[e]));
+            	$(this).html($(this).html().replace(new RegExp(charname+'(?!\.png)','gi'),sc[e]));
             }
         }
     }
