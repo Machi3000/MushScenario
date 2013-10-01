@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.1
+// @version    1.1.2
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -18,7 +18,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.1';
+var version = '1.1.2';
 
 /**
  * Userscript global tools
@@ -33,14 +33,25 @@ function m_userscriptInit() {
         +'<div class=\'tipcontent\'>'
         +'<p style="float:right;"><a href="http://mush.blablatouar.com/help.php" target="_blank">+ d\'infos</a></p>'
         +'<h1 style="background:url(\'http://www.hordes.fr/img/icons/r_repair.gif\') 0px 1px no-repeat;padding-left:18px;">UserScripts</h1>'
-        +'<span>Vous utilisez actuellement un (ou plusieurs) UserScript(s) : veuillez le(s) désactiver avant tout rapport de bug aux créateurs du jeu.</span>'
+        +'<span style="display:none">Vous utilisez actuellement un (ou plusieurs) UserScript(s) : veuillez le(s) désactiver avant tout rapport de bug aux créateurs du jeu.</span>'
         +'</div></div></div></div></div>';
         $('body').append(html);
-        setTimeout(function(){ 
-            $('#m_userscriptWarning span').slideUp();
-            $('#m_userscriptWarning').mouseenter(function() { $('#m_userscriptWarning span').slideDown('fast'); });
-            $('#m_userscriptWarning').mouseleave(function() { $('#m_userscriptWarning span').slideUp('fast'); });
-        },5000);
+        
+        if(localStorage['m_userscriptWarning']!=version) {
+           	$('#m_userscriptWarning span').slideDown();
+            setTimeout(function(){ 
+            	$('#m_userscriptWarning span').slideUp();
+                localStorage['m_userscriptWarning'] = version;
+            },5000);
+        }
+        $('#m_userscriptWarning').mouseenter(function() { $('#m_userscriptWarning span').slideDown('fast'); });
+        $('#m_userscriptWarning').mouseleave(function() { $('#m_userscriptWarning span').slideUp('fast'); });
+        
+        var css = '@media all and (max-width: 1600px) { '
+        +'.mainmenu { width: 500px; margin: 105px auto -150px; position: relative; }'
+        +'}';
+        
+        $('head').append('<style type="text/css">'+css+'</style>');
     }
 }
 
@@ -107,8 +118,8 @@ function m_replaceThisName() {
                 charname='kuan ti';
             } else if(charname=='jinsu') { 
                 charname='jin su'; 
-            } else if(charname=='schrödinger') { 
-                charname='schrodinger'; 
+            } else if(charname=='schrodinger') { 
+                charname='schrödinger'; 
             }
             
             if($(this).text().toLowerCase().indexOf(charname)>=0) {
