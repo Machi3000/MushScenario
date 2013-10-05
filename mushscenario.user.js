@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.2
+// @version    1.1.3
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -11,6 +11,7 @@
 // @exclude    http://mush.vg/g/*
 // @exclude    http://mush.vg/ranking
 // @exclude    http://mush.vg/tid/*
+// @exclude    http://mush.vg/theEnd/*
 // @copyright  2012+, Ma c'hi
 // @updateurl  https://raw.github.com/Machi3000/MushScenario/master/mushscenario.user.js
 // ==/UserScript==
@@ -18,7 +19,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.2';
+var version = '1.1.3';
 
 /**
  * Userscript global tools
@@ -48,8 +49,12 @@ function m_userscriptInit() {
         $('#m_userscriptWarning').mouseleave(function() { $('#m_userscriptWarning span').slideUp('fast'); });
         
         var css = '@media all and (max-width: 1600px) { '
-        +'.mainmenu { width: 500px; margin: 105px auto -150px; position: relative; }'
-        +'}';
+        +'.mainmenu ul#menuBar { width: 500px; margin: 0px auto; }'
+        +'body.start .mainmenu ul#menuBar { width: 500px; margin: 0px auto; }'
+        +'}'
+        +'@media only screen and (max-width: 1000px) {'
+        +'.mainmenu ul#menuBar { width: 500px !important; margin: 0px auto; text-align:center; }'
+		+'}';
         
         $('head').append('<style type="text/css">'+css+'</style>');
     }
