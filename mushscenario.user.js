@@ -1,17 +1,21 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.3
+// @version    1.1.4
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
 // @match      http://mush.vg/*
 // @match      http://mush.vg/#
-// @exclude    http://mush.vg/me
-// @exclude    http://mush.vg/group/*
 // @exclude    http://mush.vg/g/*
+// @exclude    http://mush.vg/gold/*
+// @exclude    http://mush.vg/group/*
+// @exclude    http://mush.vg/help
+// @exclude    http://mush.vg/help*
+// @exclude    http://mush.vg/me
 // @exclude    http://mush.vg/ranking
-// @exclude    http://mush.vg/tid/*
 // @exclude    http://mush.vg/theEnd/*
+// @exclude    http://mush.vg/tid/*
+// @exclude    http://mush.vg/u/*
 // @copyright  2012+, Ma c'hi
 // @updateurl  https://raw.github.com/Machi3000/MushScenario/master/mushscenario.user.js
 // ==/UserScript==
@@ -19,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.3';
+var version = '1.1.4';
 
 /**
  * Userscript global tools
