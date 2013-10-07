@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.7
+// @version    1.1.8
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.7';
+var version = '1.1.8';
 
 /**
  * Userscript global tools
@@ -90,7 +90,7 @@ function m_joinScenario() {
 function m_loadScenario(scenarioCode) {
     var data = 'code='+scenarioCode;
     localStorage['ms_scenarioCode']=scenarioCode;
-    GM_xmlhttpRequest({
+    setTimeout(function() { GM_xmlhttpRequest({
         method: 'GET',
         url: 'http://mush.blablatouar.com/scenario/api.php?'+data,
         headers:{"Accept": "text/json"},
@@ -115,7 +115,7 @@ function m_loadScenario(scenarioCode) {
             delete localStorage['ms_scenarioData'];
             delete localStorage['ms_scenarioCode'];
         }
-    });    
+    }); },0);
 }
 
 function m_leaveScenario() {
