@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.6
+// @version    1.1.7
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.6';
+var version = '1.1.7';
 
 /**
  * Userscript global tools
@@ -84,12 +84,7 @@ function m_joinScenario() {
     var newScenarioCode = prompt('MushScénario\n---------------\nVeuillez saisir le code du scénario à utiliser :');
     if(newScenarioCode==false||newScenarioCode==undefined) return false;
     
-    if(m_loadScenario(newScenarioCode)) {
-        localStorage['ms_scenarioIntro']=true;
-        document.location.reload(true);
-    } else {
-        alert('MushScénario\n---------------\nScénario introuvable.');   
-    }
+    m_loadScenario(newScenarioCode);
 }
 
 function m_loadScenario(scenarioCode) {
@@ -102,13 +97,25 @@ function m_loadScenario(scenarioCode) {
         onload: function(responseDetails) {
             if(responseDetails.responseText!='null') {
                 localStorage['ms_scenarioData']=responseDetails.responseText;
+                localStorage['ms_scenarioIntro']=true;
+        		document.location.reload(true);
             } else {
+                alert('MushScénario\n---------------\nScénario introuvable.');
                 delete localStorage['ms_scenarioData'];
     			delete localStorage['ms_scenarioCode'];
             }
+        },
+        onabort: function(responseDetails) {
+            alert('MushScénario\n---------------\nChargement du scénario annulé.');
+            delete localStorage['ms_scenarioData'];
+            delete localStorage['ms_scenarioCode'];
+        },
+        onerror: function(responseDetails) {
+            alert('MushScénario\n---------------\nErreur lors du chargement du scénario.\n('+responseDetails.statusText+')');
+            delete localStorage['ms_scenarioData'];
+            delete localStorage['ms_scenarioCode'];
         }
     });    
-    return (localStorage['ms_scenarioCode']!=''&&localStorage['ms_scenarioCode']!=undefined);
 }
 
 function m_leaveScenario() {
