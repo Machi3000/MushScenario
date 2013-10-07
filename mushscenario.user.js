@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.4
+// @version    1.1.5
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.4';
+var version = '1.1.5';
 
 /**
  * Userscript global tools
@@ -147,6 +147,10 @@ function m_replaceNames() {
 
 function m_applyScenario() {
     sc = $.parseJSON(localStorage['ms_scenarioData']);
+    if(!sc) {
+        m_leaveScenario();
+        return false;
+    }
     $('#m_scenario_title').html(sc.title);
     $('.introScenario').click(function() { m_popin(sc.title,'<em>'+sc.intro.replace(/(\n)/g,'<br />')+'</em>','Fermer'); });
     if(sc.rules.length>0) {
