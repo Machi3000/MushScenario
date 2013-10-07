@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.5
+// @version    1.1.6
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.5';
+var version = '1.1.6';
 
 /**
  * Userscript global tools
@@ -148,6 +148,8 @@ function m_replaceNames() {
 function m_applyScenario() {
     sc = $.parseJSON(localStorage['ms_scenarioData']);
     if(!sc) {
+        console.log(sc);
+        alert('MushScénario\n---------------\nUne erreur s\'est produite lors du chargement du scénario...');
         m_leaveScenario();
         return false;
     }
