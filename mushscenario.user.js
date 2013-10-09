@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.8
+// @version    1.1.9
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.8';
+var version = '1.1.9';
 
 /**
  * Userscript global tools
@@ -205,19 +205,24 @@ function m_thisInit() {
     var ms_code = localStorage['ms_scenarioCode']; 
     if(ms_code!=''&&ms_code!=undefined) {
         $('#m_scenario_details').html('<strong>Scénario en cours :</strong><br />'
-                                      +'<span id="m_scenario_title"><em>Chargement...</em></span><br />'
-                                      +'<img src="http://www.hordes.fr/gfx/forum/smiley/h_warning.gif" /> <a href="#" class="rulesScenario">Règles</a><br />'
-                                      +'<img src="http://data.hordes.fr/gfx/icons/item_rp_twin.gif" /> <a href="#" class="introScenario">Introduction</a><br />'
-                                      +'<img src="http://mush.vg/img/icons/ui/unsociable.png" /> <a href="#" class="leaveScenario">Quitter le scénario</a><br />'
-                                      +'<img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer un scénario</a>');
+                                      +'<span id="m_scenario_title"><em>Chargement...</em></span>'
+                                      +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_warning.gif" /> <a href="#" class="rulesScenario">Règles</a></span>'
+                                      +'<span><img src="http://data.hordes.fr/gfx/icons/item_rp_twin.gif" /> <a href="#" class="introScenario">Introduction</a></span>'
+                                      +'<span><img src="http://mush.vg/img/icons/ui/unsociable.png" /> <a href="#" class="leaveScenario">Annuler scénario</a></span>'
+                                      +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer un scénario</a></span>');
     	m_applyScenario();
     } else {
         $('#m_scenario_details').html('Aucun scénario en cours<br />'
-                                      +'<img src="http://www.hordes.fr/gfx/forum/smiley/h_hunter.gif" /> <a href="#" class="joinScenario">Rejoindre un scénario</a><br />'
-                                      +'<img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer un scénario</a>');
+                                      +'<span class="solo"><img src="http://www.hordes.fr/gfx/forum/smiley/h_hunter.gif" /> <a href="#" class="joinScenario">Rejoindre un scénario</a></span>'
+                                      +'<span class="solo"><img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer un scénario</a></span>');
     }
     $('.joinScenario').click(function(){ m_joinScenario(); });
     $('.leaveScenario').click(function(){ if(confirm('MushScénario\n-------------------------\nVous allez quitter ce scénario. En êtes-vous sûr ?')) m_leaveScenario(); });
+
+    var css = '#m_scenario_details span#m_scenario_title { display:block; width:100%; padding-left:10px; }'
+    + '#m_scenario_details span { display: inline-block; width: 114px; text-align:left; }'
+    + '#m_scenario_details span.solo { width: 100%; }';
+    $('head').append('<style type="text/css">'+css+'</style>');
 }
 
 
