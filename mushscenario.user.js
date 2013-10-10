@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.9
+// @version    1.1.10
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.9';
+var version = '1.1.10';
 
 /**
  * Userscript global tools
@@ -208,8 +208,8 @@ function m_thisInit() {
                                       +'<span id="m_scenario_title"><em>Chargement...</em></span>'
                                       +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_warning.gif" /> <a href="#" class="rulesScenario">Règles</a></span>'
                                       +'<span><img src="http://data.hordes.fr/gfx/icons/item_rp_twin.gif" /> <a href="#" class="introScenario">Introduction</a></span>'
-                                      +'<span><img src="http://mush.vg/img/icons/ui/unsociable.png" /> <a href="#" class="leaveScenario">Annuler scénario</a></span>'
-                                      +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer un scénario</a></span>');
+                                      +'<span><img src="http://mush.vg/img/icons/ui/unsociable.png" /> <a href="#" class="leaveScenario">Quitter scénario</a></span>'
+                                      +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer scénario</a></span>');
     	m_applyScenario();
     } else {
         $('#m_scenario_details').html('Aucun scénario en cours<br />'
