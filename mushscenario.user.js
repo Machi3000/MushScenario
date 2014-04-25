@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.1
+// @version    1.2.2
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.1';
+var version = '1.2.2';
 
 /**
  * Userscript global tools
@@ -36,7 +36,7 @@ function m_userscriptInit() {
 		+'<div class="m_tabs">'
 		+'<ul>'
         +'<li data-id="m_tabs_reduced"><img src="http://mush.vg/img/icons/ui/up.png" alt="reduced" title="Réduire ce cadre" /></li>'
-		+'<li data-id="m_tabs_warning" class="active"><img src="http://www.hordes.fr/gfx/forum/smiley/h_warning.gif" alt="warning" title="Information sur les userscripts" /></li>'
+		+'<li data-id="m_tabs_warning"><img src="http://www.hordes.fr/gfx/forum/smiley/h_warning.gif" alt="warning" title="Information sur les userscripts" /></li>'
 		+'</ul>'
 		+'<div id="m_tabs_warning">'
 		+'<p>Vous utilisez actuellement un (ou plusieurs) UserScript(s) : veuillez le(s) désactiver avant tout rapport de bug aux créateurs du jeu.<br /><a href="http://mush.blablatouar.com/help.php" target="_blank">+ d\'infos</a></p>'
@@ -54,11 +54,11 @@ function m_userscriptInit() {
     +'#m_userscriptArea .m_tabs ul li { opacity: 0.6; background: #213578; padding:4px 4px 4px 4px; cursor: pointer; display:inline-block; margin: 0px 2px 0px 2px; height:16px; vertical-align:middle;  }'
     +'#m_userscriptArea .m_tabs ul li.active, #m_userscriptArea .m_tabs ul li:hover { opacity: 1; }'
     +'#m_userscriptArea .m_tabs { padding: 0px; } '
-    +'#m_userscriptArea .m_tabs div { padding: 4px; background: #213578; }'
+    +'#m_userscriptArea .m_tabs div { padding: 4px; background: #213578; display:none; }'
     +'#m_userscriptArea .m_tabs div h3 { font-size: 1em; border-bottom: 1px dotted #CCCCCC; margin-bottom: 2px; }'
     +'#m_userscriptArea .m_tabs div img { margin-bottom:-3px; }'
     +''
-    +'#m_tabs_reduced { margin-bottom:-15px; visibility:hidden; display:none; }'
+    +'#m_tabs_reduced { margin-bottom:-15px; visibility:hidden; }'
     +''
     +'#m_userscriptPopin { position:absolute; top: 140px; background-color: #171C56; border: 1px solid #213578; font-size: 1em; padding:4px; width: 800px; right:0px; left:0px; margin: auto; box-shadow: 0px 0px 5px #000000; }'
     +'#m_userscriptPopin h2 { font-size: 0.7em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 3px 0px; padding-left:20px; }'
@@ -75,7 +75,7 @@ function m_userscriptInit() {
         $('#'+$(this).attr('data-id')).slideDown();
         $('#m_userscriptArea .m_tabs ul li').removeClass('active');
         $(this).addClass('active');
-        localStorage['m_currentTab']=name;
+        localStorage['m_currentTab']=$(this).attr('data-id').substr(7);
     });
     
 }
@@ -86,6 +86,11 @@ function m_userscriptAfterInit() {
         $('#m_tabs_'+localStorage['m_currentTab']).slideDown();
         $('#m_userscriptArea .m_tabs ul li').removeClass('active');
         $('#m_userscriptArea .m_tabs ul li[data-id="m_tabs_'+localStorage['m_currentTab']+'"]').addClass('active');
+    } else {
+        $('#m_userscriptArea .m_tabs div').slideUp();
+        $('#m_tabs_warning').slideDown();
+        $('#m_userscriptArea .m_tabs ul li').removeClass('active');
+        $('#m_userscriptArea .m_tabs ul li[data-id="m_tabs_warning"]').addClass('active');
     }
 }
 
