@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.1.10
+// @version    1.2.0
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -16,61 +16,106 @@
 // @exclude    http://mush.vg/theEnd/*
 // @exclude    http://mush.vg/tid/*
 // @exclude    http://mush.vg/u/*
-// @copyright  2012+, Ma c'hi
+// @copyright  2012-2014+, Ma c'hi
 // @updateurl  https://raw.github.com/Machi3000/MushScenario/master/mushscenario.user.js
 // ==/UserScript==
 // @require http://code.jquery.com/jquery-latest.js
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.1.10';
+var version = '1.2.0';
 
 /**
  * Userscript global tools
  **/
 
 function m_userscriptInit() {
-    if($('#m_userscriptNotif').size()<1) {
-        var html = '<div id="m_userscriptNotif" style="position:absolute; top:50px; right:0px;">'
-        +'<div id="m_userscriptWarning" class=\'tiptop\' style="margin-bottom:10px;" >'
-        +'<div class=\'tipbottom\'>'
-        +'<div class=\'tipbg\' style="min-height:0px;">'
-        +'<div class=\'tipcontent\'>'
-        +'<p style="float:right;"><a href="http://mush.blablatouar.com/help.php" target="_blank">+ d\'infos</a></p>'
-        +'<h1 style="background:url(\'http://www.hordes.fr/img/icons/r_repair.gif\') 0px 1px no-repeat;padding-left:18px;">UserScripts</h1>'
-        +'<span style="display:none">Vous utilisez actuellement un (ou plusieurs) UserScript(s) : veuillez le(s) désactiver avant tout rapport de bug aux créateurs du jeu.</span>'
-        +'</div></div></div></div></div>';
-        $('body').append(html);
-        
-        if(localStorage['m_userscriptWarning']!=version) {
-           	$('#m_userscriptWarning span').slideDown();
-            setTimeout(function(){ 
-            	$('#m_userscriptWarning span').slideUp();
-                localStorage['m_userscriptWarning'] = version;
-            },5000);
-        }
-        $('#m_userscriptWarning').mouseenter(function() { $('#m_userscriptWarning span').slideDown('fast'); });
-        $('#m_userscriptWarning').mouseleave(function() { $('#m_userscriptWarning span').slideUp('fast'); });
-        
-        var css = '@media all and (max-width: 1600px) { '
-        +'.mainmenu ul#menuBar { width: 500px; margin: 0px auto; }'
-        +'body.start .mainmenu ul#menuBar { width: 500px; margin: 0px auto; }'
-        +'}'
-        +'@media only screen and (max-width: 1000px) {'
-        +'.mainmenu ul#menuBar { width: 500px !important; margin: 0px auto; text-align:center; }'
-		+'}';
-        
-        $('head').append('<style type="text/css">'+css+'</style>');
+	if($('#m_userscriptArea').size()<1) {
+		var html = '<div id="m_userscriptArea">'
+		+'<h2>UserScripts</h2>'
+		+'<div class="m_tabs">'
+		+'<ul>'
+		+'<li data-id="m_tabs_warning" class="active"><img src="http://www.hordes.fr/gfx/forum/smiley/h_warning.gif" alt="warning" title="Information sur les userscripts" /></li>'
+		+'</ul>'
+		+'<div id="m_tabs_warning">'
+		+'<p>Vous utilisez actuellement un (ou plusieurs) UserScript(s) : veuillez le(s) désactiver avant tout rapport de bug aux créateurs du jeu.<br /><a href="http://mush.blablatouar.com/help.php" target="_blank">+ d\'infos</a></p>'
+		+'</div>'
+		+'</div>'
+		+'</div>';
+		$('body').append(html);
+	}
+	
+	var css = ' '
+    +'#m_userscriptArea { position:absolute; top: 45px; background-color: #171C56; border: 1px solid #213578; font-size: 0.7em; padding:4px; width: 300px; right:10px; box-shadow: 0px 0px 5px #000000; }'
+    +'#m_userscriptArea h2 { font-size: 1em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 8px 0px; padding-left:20px; }'
+    +'#m_userscriptArea .m_tabs ul { float:right;margin-top: -24px; }'
+    +'#m_userscriptArea .m_tabs ul li { opacity: 0.6; background: #213578; padding:4px 4px 0px 4px; cursor: pointer; display:inline-block; margin: 0px 2px 0px 2px; }'
+    +'#m_userscriptArea .m_tabs ul li.active, #m_userscriptArea .m_tabs ul li:hover { opacity: 1; }'
+    +'#m_userscriptArea .m_tabs { padding: 0px; } '
+    +'#m_userscriptArea .m_tabs div { padding: 4px; background: #213578; }'
+    +'#m_userscriptArea .m_tabs div h3 { font-size: 1em; border-bottom: 1px dotted #CCCCCC; margin-bottom: 2px; }'
+    +'#m_userscriptArea .m_tabs div img { margin-bottom:-3px; }'
+    +''
+    +'#m_userscriptPopin { position:absolute; top: 140px; background-color: #171C56; border: 1px solid #213578; font-size: 1em; padding:4px; width: 800px; right:0px; left:0px; margin: auto; box-shadow: 0px 0px 5px #000000; }'
+    +'#m_userscriptPopin h2 { font-size: 0.7em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 3px 0px; padding-left:20px; }'
+    +'#m_userscriptPopin #m_userscriptPopinContent { padding: 4px; background: #213578; }'
+    +'#m_userscriptPopin #m_userscriptPopinContent h4 { margin:4px; }'
+    +'#m_userscriptPopin #m_userscriptPopinContent p { margin: 4px 4px 4px 8px; font-size:0.9em;  }'
+    +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose { display:block; width: 100px; margin: 15px auto 5px; background-color: #102B83; border: 1px solid #171C56; color: #CCCCCC; text-decoration: none; text-align:center;  box-shadow: 0px 0px 5px #000000; }'
+    +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose:hover { color: #FFFFFF; box-shadow: 0px 0px 3px #000000; }'
+	+' ';
+    $('head').append('<style type="text/css">'+css+'</style>');
+    
+    $('#m_userscriptArea .m_tabs ul li').click(function() {
+        $('#m_userscriptArea .m_tabs div').slideUp();
+        $('#'+$(this).attr('data-id')).slideDown();
+        $('#m_userscriptArea .m_tabs ul li').removeClass('active');
+        $(this).addClass('active');
+        localStorage['m_currentTab']=name;
+    });
+    
+}
+
+function m_userscriptAfterInit() {
+    if(localStorage['m_currentTab']) {
+        $('#m_userscriptArea .m_tabs div').slideUp();
+        $('#m_tabs_'+localStorage['m_currentTab']).slideDown();
+        $('#m_userscriptArea .m_tabs ul li').removeClass('active');
+        $('#m_userscriptArea .m_tabs ul li[data-id="m_tabs_'+localStorage['m_currentTab']+'"]').addClass('active');
     }
+}
+
+function m_updateTab(name,content) {
+    $('#m_tabs_'+name).html(content);
+}
+
+function m_addTab(name,icon,content,title) {
+    if($('#m_tabs_'+name).size()<1) {
+       var li = '<li data-id="m_tabs_'+name+'"><img src="'+icon+'" alt="'+name+'" title="'+title+'" /></li>';
+       $('#m_userscriptArea .m_tabs ul').append(li);
+        var tab = '<div id="m_tabs_'+name+'" style="display:none;"></div>';
+       $('#m_userscriptArea .m_tabs').append(tab);
+    }
+    
+    $('#m_userscriptArea .m_tabs ul li[data-id="m_tabs_'+name+'"]').click(function() {
+        $('#m_userscriptArea .m_tabs div').slideUp();
+        $('#'+$(this).attr('data-id')).slideDown();
+        $('#m_userscriptArea .m_tabs ul li').removeClass('active');
+        $(this).addClass('active');
+        localStorage['m_currentTab']=name;
+    });
+    
+    m_updateTab(name,content);
 }
 
 function m_popin(title,message,button) {
     if($('#m_userscriptPopin').size()<1) {
-        var html = '<div id="m_userscriptPopin" style="position:absolute;top:200px;width:100%;"><div class="poptop" style="margin:0px auto;"><div class="popbottom"><div class="popbg" id="m_userscriptPopinContent"></div></div></div>';
+        var html = '<div id="m_userscriptPopin"><h2>UserScripts</h2><div id="m_userscriptPopinContent"></div></div>';
         $('body').append(html);
     }
     
-    $('#m_userscriptPopinContent').html('<img src="img/design/neron.png" class="stamp" /><h4 style="margin-top:0px;">'+title+'</h4><p style="padding-left:76px;">'+message+'</p><div class="but"><div class="butright"><div class="butbg"><a href="#" class="m_userscriptPopinClose">'+button+'</a></div></div></div>');    
+    $('#m_userscriptPopinContent').html('<h4>'+title+'</h4><p>'+message+'</p><a href="#" class="m_userscriptPopinClose">'+button+'</a>');    
+    
     $('#m_userscriptPopin').fadeIn();
     $('.m_userscriptPopinClose').click(function(){ $('#m_userscriptPopin').fadeOut(); });
 }
@@ -126,20 +171,22 @@ function m_leaveScenario() {
 }
 
 function m_replaceThisName() {
-    console.log('> '+$(this).text().toLowerCase());
-    for(e in sc) {
-        if(e.indexOf('char_')==0) {
-            var charname = e.substr(5);
-            if(charname=='kuanti') { 
-                charname='kuan ti';
-            } else if(charname=='jinsu') { 
-                charname='jin su'; 
-            } else if(charname=='schrodinger') { 
-                charname='schrödinger'; 
-            }
-            
-            if($(this).text().toLowerCase().indexOf(charname)>=0) {
-            	$(this).html($(this).html().replace(new RegExp(charname+'(?!\.png)','gi'),sc[e]));
+    if(!$(this).hasClass('ms_parsed')) {
+        $(this).addClass('ms_parsed');
+        for(e in sc) {
+            if(e.indexOf('char_')==0) {
+                var charname = e.substr(5);
+                if(charname=='kuanti') { 
+                    charname='kuan ti';
+                } else if(charname=='jinsu') { 
+                    charname='jin su'; 
+                } else if(charname=='schrodinger') { 
+                    charname='schrödinger'; 
+                }
+                    
+                if($(this).text().toLowerCase().indexOf(charname)>=0) {
+                    $(this).html($(this).html().replace(new RegExp(charname+'(?!\.png)','gi'),'<span class="ms_replaced" title="'+charname+'">'+sc[e]+'</span>'));
+                }
             }
         }
     }
@@ -192,16 +239,13 @@ function m_applyScenario() {
 }
 
 function m_thisInit() {
-    var html = '<div id="m_scenario" class=\'tiptop\' style="margin-bottom:10px;" >'
-    +'<div class=\'tipbottom\'>'
-    +'<div class=\'tipbg\' style="min-height:0px;">'
-    +'<div class=\'tipcontent\'>'
+    var html = ''
     +'<p style="float:right;opacity:0.4;"><a href="http://mush.blablatouar.com/scenario/index.php" target="_blank">v '+version+'</a></p>'
-    +'<h1 style="background:url(\'http://mush.vg/img/icons/ui/book.png\') 0px 1px no-repeat;padding-left:18px;">MushScénario</h1>'
+    +'<h3><img src="http://mush.vg/img/icons/ui/book.png" /> MushScénario</h3>'
     +'<span id="m_scenario_details"></span>'
-    +'</div></div></div></div>';
-    $('#m_userscriptNotif').append(html);
-    
+    +'';
+    m_addTab('scenario','http://mush.vg/img/icons/ui/book.png',html,'Mush Scénario');
+        
     var ms_code = localStorage['ms_scenarioCode']; 
     if(ms_code!=''&&ms_code!=undefined) {
         $('#m_scenario_details').html('<strong>Scénario en cours :</strong><br />'
@@ -221,7 +265,8 @@ function m_thisInit() {
 
     var css = '#m_scenario_details span#m_scenario_title { display:block; width:100%; padding-left:10px; }'
     + '#m_scenario_details span { display: inline-block; width: 114px; text-align:left; }'
-    + '#m_scenario_details span.solo { width: 100%; }';
+    + '#m_scenario_details span.solo { width: 100%; }'
+    + '.ms_replaced { cursor: help; }';
     $('head').append('<style type="text/css">'+css+'</style>');
 }
 
@@ -232,5 +277,6 @@ function m_thisInit() {
 function m_init() {
     m_userscriptInit();
     m_thisInit();
+    m_userscriptAfterInit();
 }
 window.addEventListener('load', m_init, false);
