@@ -13,9 +13,13 @@ Installation
 
 Fonctionnalités
 ---------
-- Remplacement des pseudos de personnages selon les paramètres du script
-- Affichage du nom du scénario et d'un avertissement UserScript
+- Système de chargement/stockage de scénarios depuis le serveur [http://mush.blablatouar.com/scenario]
+- Remplacement de nombreux éléments au sein du jeu selon le scénario choisi : nom de personnage, projet, recherche, objet, ...
+- Affichage d'un avertissement concernant l'utilisation d'userscripts
 
 ToDo List
 ---------
 - Amélioration immédiateté modification quand refresh ajax de la page
+- Compatibilité avec Message Center de CTRL+W
+- Compatibilité avec AstroPad
+- Correction de bugs et gestion d'emplacements supplémentaires où effectuer les remplacements
