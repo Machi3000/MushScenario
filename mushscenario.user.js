@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.4
+// @version    1.2.5
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.4';
+var version = '1.2.5';
 
 /**
  * Userscript global tools
@@ -62,6 +62,7 @@ function m_userscriptInit() {
     +''
     +'#m_userscriptPopin { z-index:1000; position:absolute; top: 140px; background-color: #171C56; border: 1px solid #213578; font-size: 1em; padding:4px; width: 800px; right:0px; left:0px; margin: auto; box-shadow: 0px 0px 5px #000000; }'
     +'#m_userscriptPopin h2 { font-size: 0.7em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 3px 0px; padding-left:20px; }'
+    +'#m_userscriptPopin em { color:#84E100; }'
     +'#m_userscriptPopin #m_userscriptPopinContent { padding: 4px; background: #213578; }'
     +'#m_userscriptPopin #m_userscriptPopinContent h4 { margin:4px; }'
     +'#m_userscriptPopin #m_userscriptPopinContent p { margin: 4px 4px 4px 8px; font-size:0.9em;  }'
@@ -183,45 +184,57 @@ function m_leaveScenario() {
     document.location.reload(true);
 }
 
-function m_replaceThisName() {
+function m_parseThis() {
+    var log = '';
     if(!$(this).hasClass('ms_parsed')) {
         $(this).addClass('ms_parsed');
-        for(e in sc) {
-            if(e.indexOf('char_')==0) {
-                var charname = e.substr(5);
-                if(charname=='kuanti') { 
-                    charname='kuan ti';
-                } else if(charname=='jinsu') { 
-                    charname='jin su'; 
-                } else if(charname=='schrodinger') { 
-                    charname='schrödinger'; 
+        var original = sc['original_names'];
+        
+        for(cat in original) {
+            for(id in original[cat]) {
+                var name = original[cat][id];
+                var search = name;
+                if($(this).text().indexOf(search)>=0&&sc[cat+'_'+id]!='') {
+                    log+='found '+search+' ('+cat+'_'+id+' => "'+sc[cat+'_'+id]+'") '
+                    $(this).html($(this).html().replace(new RegExp(search+'(?!(\.png|[a-zA-Zàâçèéêîôùû]))','gi'),'<span class="ms_replaced" title="'+name+'">'+sc[cat+'_'+id]+'</span>'));
                 }
-                    
-                if($(this).text().toLowerCase().indexOf(charname)>=0) {
-                    $(this).html($(this).html().replace(new RegExp(charname+'(?!\.png)','gi'),'<span class="ms_replaced" title="'+charname+'">'+sc[e]+'</span>'));
-                }
-            }
-            if(e.indexOf('item_')==0) {
-                
-            }
-            if(e.indexOf('search_')==0) {
-                
-            }
-            if(e.indexOf('project_')==0) {
-                
-            }
-            if(e.indexOf('m_')==0) {
-                
             }
         }
     }
+    if(log!='') console.log('[M_parseThis] '+log);
 }
 
+function m_parseHTML(html) {    
+    var log = '';
+    var original = sc['original_names'];
+    var result_html = html;
+    for(cat in original) {
+        for(id in original[cat]) {
+            var name = original[cat][id];
+            var search = name;
+            if(html.toLowerCase().indexOf(search.toLowerCase())>=0&&sc[cat+'_'+id]!='') {
+                log+='found '+search+' ('+cat+'_'+id+' => "'+sc[cat+'_'+id]+'") '
+                var replacement = sc[cat+'_'+id];
+                var result_html = result_html.replace(new RegExp(search+'(?!(\.png|[a-zA-Zàâçèéêîôùû]))','gi'),replacement);
+            }
+        }
+    }
+
+    if(log!='') console.log('[M_parseHTML] '+log);
+    if(result_html) return result_html;
+    return html;
+}
+
+
+
+
+
 function m_replaceNames() {
-    $('#chat_col span.buddy').each(m_replaceThisName);
-    $('#chat_col strong').each(m_replaceThisName);
-    $('#chat_col .objective p').each(m_replaceThisName);
-    $('h1.who').each(m_replaceThisName); 
+    $('#chat_col span.buddy').each(m_parseThis);
+    $('#chat_col strong').each(m_parseThis);
+    $('#chat_col .objective p').each(m_parseThis);
+    $('h1.who').each(m_parseThis);
+    $('#vending ul.dev li h3').each(m_parseThis);    
 }
 
 function m_applyScenario() {
@@ -232,6 +245,11 @@ function m_applyScenario() {
         m_leaveScenario();
         return false;
     }
+    if(!sc['original_names']) {
+        // Reload if old scenario format loaded.
+        m_loadScenario(localStorage['ms_scenarioCode']);
+    }
+    
     $('#m_scenario_title').html(sc.title);
     $('.introScenario').click(function() { m_popin(sc.title,'<em>'+sc.intro.replace(/(\n)/g,'<br />')+'</em>','Fermer'); });
     if(sc.rules.length>0) {
@@ -260,6 +278,13 @@ function m_applyScenario() {
     Main.loadMoreWall = function(jq) {
         ms_mainLoadMoreWall(jq);
         setTimeout(m_replaceNames,2000);
+    }
+    
+    // Handle tooltip content
+    var ms_mtJsTipShow = mt.js.Tip.show;
+    mt.js.Tip.show = function(refObj,contentHTML,cName,pRef) {
+        var parsed_html = m_parseHTML(contentHTML);
+        ms_mtJsTipShow(refObj,parsed_html,cName,pRef);
     }
 }
 
