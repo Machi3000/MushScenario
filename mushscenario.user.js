@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.3
+// @version    1.2.4
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.3';
+var version = '1.2.4';
 
 /**
  * Userscript global tools
@@ -67,7 +67,11 @@ function m_userscriptInit() {
     +'#m_userscriptPopin #m_userscriptPopinContent p { margin: 4px 4px 4px 8px; font-size:0.9em;  }'
     +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose { display:block; width: 100px; margin: 15px auto 5px; background-color: #102B83; border: 1px solid #171C56; color: #CCCCCC; text-decoration: none; text-align:center;  box-shadow: 0px 0px 5px #000000; }'
     +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose:hover { color: #FFFFFF; box-shadow: 0px 0px 3px #000000; }'
-	+' ';
+	+'@media all and (max-width: 1700px) {'
+	+' ul.kmenu { margin-right:310px; }'
+	+' ul.kmenu li.kmenuel a { width: 100px; }'
+	+'}'
+    +' ';
     $('head').append('<style type="text/css">'+css+'</style>');
     
     $('#m_userscriptArea .m_tabs ul li').click(function() {
