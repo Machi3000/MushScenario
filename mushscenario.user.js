@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.2
+// @version    1.2.3
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.2';
+var version = '1.2.3';
 
 /**
  * Userscript global tools
@@ -60,7 +60,7 @@ function m_userscriptInit() {
     +''
     +'#m_tabs_reduced { margin-bottom:-15px; visibility:hidden; }'
     +''
-    +'#m_userscriptPopin { position:absolute; top: 140px; background-color: #171C56; border: 1px solid #213578; font-size: 1em; padding:4px; width: 800px; right:0px; left:0px; margin: auto; box-shadow: 0px 0px 5px #000000; }'
+    +'#m_userscriptPopin { z-index:1000; position:absolute; top: 140px; background-color: #171C56; border: 1px solid #213578; font-size: 1em; padding:4px; width: 800px; right:0px; left:0px; margin: auto; box-shadow: 0px 0px 5px #000000; }'
     +'#m_userscriptPopin h2 { font-size: 0.7em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 3px 0px; padding-left:20px; }'
     +'#m_userscriptPopin #m_userscriptPopinContent { padding: 4px; background: #213578; }'
     +'#m_userscriptPopin #m_userscriptPopinContent h4 { margin:4px; }'
