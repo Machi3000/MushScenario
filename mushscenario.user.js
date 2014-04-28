@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.5
+// @version    1.2.6
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.5';
+var version = '1.2.6';
 
 /**
  * Userscript global tools
@@ -72,6 +72,7 @@ function m_userscriptInit() {
 	+' ul.kmenu { margin-right:310px; }'
 	+' ul.kmenu li.kmenuel a { width: 100px; }'
 	+'}'
+    +'*[data-m="compatibilityData"] { display:none !important; }'
     +' ';
     $('head').append('<style type="text/css">'+css+'</style>');
     
@@ -186,7 +187,7 @@ function m_leaveScenario() {
 
 function m_parseThis() {
     var log = '';
-    if(!$(this).hasClass('ms_parsed')) {
+    if(!$(this).hasClass('ms_parsed')&&$(this).attr('data-m')!="compatibilityData") {
         $(this).addClass('ms_parsed');
         var original = sc['original_names'];
         
@@ -264,7 +265,12 @@ function m_applyScenario() {
         delete localStorage['ms_scenarioIntro'];
     }
     
-    // Replace characters names
+    // Who is playing ?
+    localStorage['ms_who'] = $('h1.who').text();
+    	// astropad compatibility
+   		$('h1.who').before('<h1 class="h1 who" data-m="compatibilityData">'+localStorage['ms_who']+'</h1>');
+    
+    // Replace names
     m_replaceNames(sc);
     
     // Handle ajax updates
