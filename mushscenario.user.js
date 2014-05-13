@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.6
+// @version    1.2.7
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
@@ -23,7 +23,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.6';
+var version = '1.2.7';
 
 /**
  * Userscript global tools
@@ -155,7 +155,7 @@ function m_loadScenario(scenarioCode) {
         url: 'http://mush.blablatouar.com/scenario/api.php?'+data,
         headers:{"Accept": "text/json"},
         onload: function(responseDetails) {
-            if(responseDetails.responseText!='null') {
+            if(responseDetails.responseText!='null'&&responseDetails.responseText!='') {
                 localStorage['ms_scenarioData']=responseDetails.responseText;
                 localStorage['ms_scenarioIntro']=true;
         		document.location.reload(true);
@@ -163,17 +163,20 @@ function m_loadScenario(scenarioCode) {
                 alert('MushScénario\n---------------\nScénario introuvable.');
                 delete localStorage['ms_scenarioData'];
     			delete localStorage['ms_scenarioCode'];
+                document.location.reload(true);
             }
         },
         onabort: function(responseDetails) {
             alert('MushScénario\n---------------\nChargement du scénario annulé.');
             delete localStorage['ms_scenarioData'];
             delete localStorage['ms_scenarioCode'];
+            document.location.reload(true);
         },
         onerror: function(responseDetails) {
             alert('MushScénario\n---------------\nErreur lors du chargement du scénario.\n('+responseDetails.statusText+')');
             delete localStorage['ms_scenarioData'];
             delete localStorage['ms_scenarioCode'];
+            document.location.reload(true);
         }
     }); },0);
 }
@@ -239,6 +242,14 @@ function m_replaceNames() {
 }
 
 function m_applyScenario() {
+    if(localStorage['ms_scenarioData']==''||localStorage['ms_scenarioData']==undefined) {
+        if(localStorage['ms_scenarioCode']!=''||locaStorage['ms_scenarioCode']==undefined) {
+            m_leaveScenario();
+        } else {
+            m_loadScenario(localStorage['ms_scenarioCode']);
+        }
+    }
+    
     sc = $.parseJSON(localStorage['ms_scenarioData']);
     if(!sc) {
         console.log(sc);
@@ -246,7 +257,7 @@ function m_applyScenario() {
         m_leaveScenario();
         return false;
     }
-    if(!sc['original_names']) {
+    if(!sc['original_names']||!sc['id']) {
         // Reload if old scenario format loaded.
         m_loadScenario(localStorage['ms_scenarioCode']);
     }
@@ -308,8 +319,10 @@ function m_thisInit() {
                                       +'<span id="m_scenario_title"><em>Chargement...</em></span>'
                                       +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_warning.gif" /> <a href="#" class="rulesScenario">Règles</a></span>'
                                       +'<span><img src="http://data.hordes.fr/gfx/icons/item_rp_twin.gif" /> <a href="#" class="introScenario">Introduction</a></span>'
-                                      +'<span><img src="http://mush.vg/img/icons/ui/unsociable.png" /> <a href="#" class="leaveScenario">Quitter scénario</a></span>'
-                                      +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer scénario</a></span>');
+                                      +'<br /><strong style="display: inline-block;margin-top: 3px;">Actions Scénario : </strong><br />'
+                                      +'<span><img src="http://data.twinoid.com/img/icons/refresh.png" /> <a href="#" class="refreshScenario">Recharger</a></span>'
+                                      +'<span><img src="http://mush.vg/img/icons/ui/unsociable.png" /> <a href="#" class="leaveScenario">Quitter</a></span>'
+                                      +'<span><img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Nouveau</a></span>');
     	m_applyScenario();
     } else {
         $('#m_scenario_details').html('Aucun scénario en cours<br />'
@@ -317,10 +330,11 @@ function m_thisInit() {
                                       +'<span class="solo"><img src="http://www.hordes.fr/gfx/forum/smiley/h_plan.gif" /> <a href="http://mush.blablatouar.com/scenario/create.php" target="_blank">Créer un scénario</a></span>');
     }
     $('.joinScenario').click(function(){ m_joinScenario(); });
+    $('.refreshScenario').click(function(){ m_loadScenario(ms_code); });
     $('.leaveScenario').click(function(){ if(confirm('MushScénario\n-------------------------\nVous allez quitter ce scénario. En êtes-vous sûr ?')) m_leaveScenario(); });
 
     var css = '#m_scenario_details span#m_scenario_title { display:block; width:100%; padding-left:10px; }'
-    + '#m_scenario_details span { display: inline-block; width: 114px; text-align:left; }'
+    + '#m_scenario_details span { display: inline-block; width: 96px; text-align:left; }'
     + '#m_scenario_details span.solo { width: 100%; }'
     + '.ms_replaced { cursor: help; }';
     $('head').append('<style type="text/css">'+css+'</style>');
