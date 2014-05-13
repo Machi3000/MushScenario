@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name       MushScenario
 // @version    1.2.7
+// @author     Ma c'hi (mush@machi.tel)
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
 // @match      http://mush.vg
