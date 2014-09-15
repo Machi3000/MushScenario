@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.8
+// @version    1.2.9
 // @author     Ma c'hi (mush@machi.tel)
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
@@ -24,7 +24,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.8';
+var version = '1.2.9';
 
 /**
  * Userscript global tools
@@ -32,6 +32,7 @@ var version = '1.2.8';
 
 function m_userscriptInit() {
 	if($('#m_userscriptArea').size()<1) {
+		localStorage['m_notFirstUserscript'] = false;
 		var html = '<div id="m_userscriptArea">'
 		+'<h2>UserScripts</h2>'
 		+'<div class="m_tabs">'
@@ -46,55 +47,58 @@ function m_userscriptInit() {
 		+'</div>'
 		+'</div>';
 		$('body').append(html);
+
+		var css = ' '
+	    +'#m_userscriptArea { position:absolute; top: 45px; background-color: #171C56; border: 1px solid #213578; font-size: 0.7em; padding:4px; width: 300px; right:10px; box-shadow: 0px 0px 5px #000000; overflow:hidden; }'
+	    +'#m_userscriptArea p { font-size: inherit; }'
+	    +'#m_userscriptArea h2 { font-size: 1em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 8px 0px; padding-left:20px; }'
+	    +'#m_userscriptArea .m_tabs ul { float:right;margin-top: -24px; }'
+	    +'#m_userscriptArea .m_tabs ul li { opacity: 0.6; background: #213578; padding:4px 4px 4px 4px; cursor: pointer; display:inline-block; margin: 0px 2px 0px 2px; height:16px; vertical-align:middle;  }'
+	    +'#m_userscriptArea .m_tabs ul li.active, #m_userscriptArea .m_tabs ul li:hover { opacity: 1; }'
+	    +'#m_userscriptArea .m_tabs { padding: 0px; } '
+	    +'#m_userscriptArea .m_tabs div { padding: 4px; background: #213578; display:none; }'
+	    +'#m_userscriptArea .m_tabs div h3 { font-size: 1em; border-bottom: 1px dotted #CCCCCC; margin-bottom: 2px; }'
+	    +'#m_userscriptArea .m_tabs div img { margin-bottom:-3px; }'
+	    +''
+	    +'#m_tabs_reduced { margin-bottom:-15px; visibility:hidden; }'
+	    +''
+	    +'#m_userscriptPopin { z-index:1000; position:absolute; top: 140px; background-color: #171C56; border: 1px solid #213578; font-size: 1em; padding:4px; width: 800px; right:0px; left:0px; margin: auto; box-shadow: 0px 0px 5px #000000; }'
+	    +'#m_userscriptPopin h2 { font-size: 0.7em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 3px 0px; padding-left:20px; }'
+	    +'#m_userscriptPopin em { color:#84E100; }'
+	    +'#m_userscriptPopin #m_userscriptPopinContent { padding: 4px; background: #213578; }'
+	    +'#m_userscriptPopin #m_userscriptPopinContent h4 { margin:4px; }'
+	    +'#m_userscriptPopin #m_userscriptPopinContent p { margin: 4px 4px 4px 8px; font-size:0.9em;  }'
+	    +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose { display:block; width: 100px; margin: 15px auto 5px; background-color: #102B83; border: 1px solid #171C56; color: #CCCCCC; text-decoration: none; text-align:center;  box-shadow: 0px 0px 5px #000000; }'
+	    +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose:hover { color: #FFFFFF; box-shadow: 0px 0px 3px #000000; }'
+		+'@media all and (max-width: 1700px) {'
+		+' ul.kmenu { margin-right:310px; }'
+		+' ul.kmenu li.kmenuel a { width: 100px; }'
+		+'}'
+	    +'*[data-m="compatibilityData"] { display:none !important; }'
+	    +' ';
+	    $('head').append('<style type="text/css">'+css+'</style>');
+	    
+	    $('#m_userscriptArea .m_tabs ul li').click(function() {
+	        $('#m_userscriptArea .m_tabs div').slideUp();
+	        $('#'+$(this).attr('data-id')).slideDown();
+	        $('#m_userscriptArea .m_tabs ul li').removeClass('active');
+	        $(this).addClass('active');
+	        localStorage['m_currentTab']=$(this).attr('data-id').substr(7);
+	    });
+	} else {
+		localStorage['m_notFirstUserscript'] = true;
 	}
-	
-	var css = ' '
-    +'#m_userscriptArea { position:absolute; top: 45px; background-color: #171C56; border: 1px solid #213578; font-size: 0.7em; padding:4px; width: 300px; right:10px; box-shadow: 0px 0px 5px #000000; overflow:hidden; }'
-    +'#m_userscriptArea p { font-size: inherit; }'
-    +'#m_userscriptArea h2 { font-size: 1em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 8px 0px; padding-left:20px; }'
-    +'#m_userscriptArea .m_tabs ul { float:right;margin-top: -24px; }'
-    +'#m_userscriptArea .m_tabs ul li { opacity: 0.6; background: #213578; padding:4px 4px 4px 4px; cursor: pointer; display:inline-block; margin: 0px 2px 0px 2px; height:16px; vertical-align:middle;  }'
-    +'#m_userscriptArea .m_tabs ul li.active, #m_userscriptArea .m_tabs ul li:hover { opacity: 1; }'
-    +'#m_userscriptArea .m_tabs { padding: 0px; } '
-    +'#m_userscriptArea .m_tabs div { padding: 4px; background: #213578; display:none; }'
-    +'#m_userscriptArea .m_tabs div h3 { font-size: 1em; border-bottom: 1px dotted #CCCCCC; margin-bottom: 2px; }'
-    +'#m_userscriptArea .m_tabs div img { margin-bottom:-3px; }'
-    +''
-    +'#m_tabs_reduced { margin-bottom:-15px; visibility:hidden; }'
-    +''
-    +'#m_userscriptPopin { z-index:1000; position:absolute; top: 140px; background-color: #171C56; border: 1px solid #213578; font-size: 1em; padding:4px; width: 800px; right:0px; left:0px; margin: auto; box-shadow: 0px 0px 5px #000000; }'
-    +'#m_userscriptPopin h2 { font-size: 0.7em; background: url(http://www.hordes.fr/img/icons/r_repair.gif) 1px 0px no-repeat; margin: 0px 0px 3px 0px; padding-left:20px; }'
-    +'#m_userscriptPopin em { color:#84E100; }'
-    +'#m_userscriptPopin #m_userscriptPopinContent { padding: 4px; background: #213578; }'
-    +'#m_userscriptPopin #m_userscriptPopinContent h4 { margin:4px; }'
-    +'#m_userscriptPopin #m_userscriptPopinContent p { margin: 4px 4px 4px 8px; font-size:0.9em;  }'
-    +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose { display:block; width: 100px; margin: 15px auto 5px; background-color: #102B83; border: 1px solid #171C56; color: #CCCCCC; text-decoration: none; text-align:center;  box-shadow: 0px 0px 5px #000000; }'
-    +'#m_userscriptPopin #m_userscriptPopinContent a.m_userscriptPopinClose:hover { color: #FFFFFF; box-shadow: 0px 0px 3px #000000; }'
-	+'@media all and (max-width: 1700px) {'
-	+' ul.kmenu { margin-right:310px; }'
-	+' ul.kmenu li.kmenuel a { width: 100px; }'
-	+'}'
-    +'*[data-m="compatibilityData"] { display:none !important; }'
-    +' ';
-    $('head').append('<style type="text/css">'+css+'</style>');
-    
-    $('#m_userscriptArea .m_tabs ul li').click(function() {
-        $('#m_userscriptArea .m_tabs div').slideUp();
-        $('#'+$(this).attr('data-id')).slideDown();
-        $('#m_userscriptArea .m_tabs ul li').removeClass('active');
-        $(this).addClass('active');
-        localStorage['m_currentTab']=$(this).attr('data-id').substr(7);
-    });
-    
 }
 
 function m_userscriptAfterInit() {
     if(localStorage['m_currentTab']) {
-        $('#m_userscriptArea .m_tabs div').slideUp();
+    	if(!localStorage['m_notFirstUserscript']) {
+        	$('#m_userscriptArea .m_tabs div').slideUp();
+    	}
         $('#m_tabs_'+localStorage['m_currentTab']).slideDown();
         $('#m_userscriptArea .m_tabs ul li').removeClass('active');
         $('#m_userscriptArea .m_tabs ul li[data-id="m_tabs_'+localStorage['m_currentTab']+'"]').addClass('active');
-    } else {
+    } else if(!localStorage['m_notFirstUserscript']) {
         $('#m_userscriptArea .m_tabs div').slideUp();
         $('#m_tabs_warning').slideDown();
         $('#m_userscriptArea .m_tabs ul li').removeClass('active');
