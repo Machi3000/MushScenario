@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       MushScenario
-// @version    1.2.10
+// @version    1.2.11
 // @author     Ma c'hi (mush@machi.tel)
 // @description  Modifications de Mush.vg pour parties scénarisées
 // @grant      GM_xmlhttpRequest
@@ -24,7 +24,7 @@
 var $ = unsafeWindow.jQuery;
 var Main = unsafeWindow.Main;
 
-var version = '1.2.10';
+var version = '1.2.11';
 
 /**
  * Userscript global tools
@@ -314,7 +314,7 @@ function m_applyScenario() {
 function m_thisInit() {
     var html = ''
     +'<p style="float:right;opacity:0.4;"><a href="http://mush.blablatouar.com/scenario/index.php" target="_blank">v '+version+'</a></p>'
-    +'<h3><img src="http://musb.blablatouar.com/img/scenario.png" /> MushScénario</h3>'
+    +'<h3><img src="http://mush.blablatouar.com/img/scenario.png" /> MushScénario</h3>'
     +'<span id="m_scenario_details"></span>'
     +'';
     m_addTab('scenario','http://mush.vg/img/icons/ui/book.png',html,'Mush Scénario');
